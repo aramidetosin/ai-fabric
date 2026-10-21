@@ -1,7 +1,11 @@
 [Unit]
 Description=ai-fabric cluster self-bootstrap (kubeadm init/join, Cilium, cert-manager, Gateway, demo)
 After=ai-fabric-netsetup.service containerd.service network.target
-Requires=ai-fabric-netsetup.service containerd.service
+# containerd is Wants=, not Requires=: restarting containerd (registry-mirrors.sh does, once, when it first writes the
+# mirror config) would otherwise STOP this unit with it -- systemd then restarts it, it restarts containerd again, and
+# the bootstrap dies on start-limit-hit before kubeadm ever runs. After= still orders it behind containerd.
+Requires=ai-fabric-netsetup.service
+Wants=containerd.service
 
 [Service]
 Environment=HOME=/root
