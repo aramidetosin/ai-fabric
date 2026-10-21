@@ -46,6 +46,16 @@ if grep -q " nxos$" mgmt-hosts.txt; then echo "waiting for the Nexus switches, t
   { ./nx-wait.sh && ./nx-tcam-reload.sh; } || echo "WARNING: Nexus switches not ready or TCAM carve not active (see above)"
   # Nexus Dashboard's telemetry block (profiles with ndfc=True): applied after boot, see nx-telemetry.sh for why it is not in configs/*.cfg
   ./nx-telemetry.sh || echo "WARNING: ND telemetry block not applied on every Nexus switch (see above)"; fi
+# A PC's address and routes are runtime state: clab `exec` runs pc-init.sh ONCE, during the deploy. Anything that bounces the link to
+# the firewall afterwards -- the PA-VM finishing its boot, the TCAM reload of the vPC leaves -- takes the interface down, and the kernel
+# drops every route that pointed out of it without putting them back. pc-1 is then left with only its connected /24, every routed path
+# in finish.sh stage 5 fails, and the sweep can never reach three clean rounds. pc-init.sh is idempotent, so run it again here.
+if [ "${1:-}" != light ]; then
+  LABPFX="clab-$(python3 -c 'import gen; print(gen.LAB)')"
+  for p in $(python3 -c 'import gen; print(gen.PC1["name"], gen.PC2["name"])'); do
+    docker exec "$LABPFX-$p" sh /pc-init.sh >/dev/null 2>&1 || echo "WARNING: could not re-run pc-init.sh on $p (its routed paths may fail)"
+  done
+fi
 if [ "${1:-}" != light ]; then ./wait-fabric.sh || echo "WARNING: releasing the guests although the frontend has not converged"; rm -f shared/hold-guests; echo "$(date +%T) guests released"; fi
 # everything after the deploy, up to "fully working": bootstrap wait, node roles, Harbor/S3/Longhorn services, pods settled (finish.sh)
 if [ "${1:-}" != light ] && [ -z "${NO_FINISH:-}" ]; then ./finish.sh; fi
