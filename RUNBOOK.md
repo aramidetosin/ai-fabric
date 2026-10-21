@@ -46,13 +46,24 @@ $EDITOR .env                  # set every value; generation commands are in the 
 set -a; . ./.env; set +a      # export before gen.py / up.sh
 ```
 
-Then create your own key file (the original was removed for publication):
+Then create your own key file (the original was removed for publication). **Operator keys only** —
+anything else in this file is handed to the switches. Two roles matter:
+
+* the **lab host's own root key** becomes NX-OS user `ops`, which the readiness checks
+  (`nx-wait.sh`, `lib.sh NX()`) log in with. It is recognised by its `root@<host>` comment, so append
+  the `.pub` file, which carries that comment — `ssh-keygen -y` prints the key *without* one.
+* **your workstation key** becomes user `admin` (NX-OS allows one key per user).
 
 ```bash
 cp common/authorized_keys.example common/authorized_keys
-cat ~/.ssh/id_ed25519.pub >> common/authorized_keys
-# and set LAB_WORKSTATION_KEY_COMMENT in .env to that key's comment
+cat /root/.ssh/id_ed25519.pub >> common/authorized_keys    # on the LAB HOST -> user `ops`
+cat ~/.ssh/id_ed25519.pub     >> common/authorized_keys    # your workstation -> user `admin`
+# set LAB_WORKSTATION_KEY_COMMENT in .env to your workstation key's comment
 ```
+
+Without an `ops` key the deploy stalls for 40 minutes at the Nexus readiness wait and then skips the
+vPC fabric-peering TCAM carve, so check that `configs/fe-spine1.cfg` contains `username ops` after
+`python3 gen.py`.
 
 If you use the `ndfc=True` profile flag, also replace the placeholder `NDFC_USER` hash in `gen.py`
 — see the note in `.env.example`.
