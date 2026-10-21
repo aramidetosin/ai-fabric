@@ -162,12 +162,26 @@ systemd-run --unit=fabric-up --collect --setenv=HOME=/root \
 ### If bring-up is slow or the switches time out
 
 On a slower host, cold-starting every switch in the same second overloads the disk and vrnetlab's
-console bootstrap loses sync (symptoms: `Login incorrect`, a switch stuck at `loader >`, the PA-VM
-stuck at `Enter old password`). The profile key `boot_stagger` spreads them out:
+console bootstrap loses sync. Symptoms: `Login incorrect`, a switch stuck at `loader >`, an N9Kv
+looping in POAP (`POAP DHCP Discover phase started` over and over in `docker logs`, because the
+launcher never answered the "Abort Power On Auto Provisioning" prompt), or the PA-VM stuck at
+`Enter old password`. The profile key `boot_stagger` spreads them out:
 
 ```python
 boot_stagger=dict(ocnos=20, nxos_first=240, nxos=60)   # seconds, fed to clab startup-delay
 ```
+
+If one switch still comes up wedged, restart **that container only**. vrnetlab replays its console
+bootstrap from the beginning, which is the part that failed:
+
+```bash
+docker restart clab-ai-fabric-fe-border2                               # ~10-14 min for an N9Kv
+docker inspect -f '{{.State.Health.Status}}' clab-ai-fabric-fe-border2
+```
+
+`nx-wait.sh` allows 40 minutes, so a restart inside that window lets the deploy carry on by itself.
+If it does time out, nothing is lost and nothing needs redeploying: `./nx-wait.sh`,
+`./nx-tcam-reload.sh` and then `./finish.sh` resume from there — all three are idempotent.
 
 ---
 
