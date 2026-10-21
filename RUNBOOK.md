@@ -257,6 +257,15 @@ that is how a lab ends up half-destroyed.
 | `configs/`, `bootstrap/fw.xml`, `*.clab.yml` | generated — run `python3 gen.py` |
 | `nodes/`, `shared/`, `ca/`, `publish/`, `audits/` | runtime state, host-specific |
 | The per-site directories | site-specific detail |
-| Organisation and host names | the two hosts are now `site-a` / `site-b`, DNS `dns-a` / `dns-b` |
+| Organisation and host names | the two hosts are now `site-a` / `site-b`, DNS `dns-a` / `dns-b`, and the office workstations are unnamed |
+| The Ubuntu cloud image | ~600 MB, download it yourself (section 2) |
+| An unrelated NMS integration | a vendor product with its own licensed demo VM; nothing in this lab depended on it |
 
-The diagrams, cabling matrices, generator and every script are intact.
+One **functional** rename came with publication: the Kubernetes label domain is now
+`node-role.ai-fabric.lab/*` (and `ai-fabric.lab/lb-pool`). It is applied consistently by the
+bootstrap and expected consistently by `roles.sh`, `validate.sh`, `netop.sh` and the Cilium LB
+pools, so a clean deploy needs nothing from you — but labels you already have on an older cluster
+will not match.
+
+The diagrams, cabling matrices, the generator and the scripts are intact, including the inference
+gateway tooling in `scripts/`. A few ad-hoc debugging scripts were dropped.
