@@ -171,17 +171,25 @@ launcher never answered the "Abort Power On Auto Provisioning" prompt), or the P
 boot_stagger=dict(ocnos=20, nxos_first=240, nxos=60)   # seconds, fed to clab startup-delay
 ```
 
-If one switch still comes up wedged, restart **that container only**. vrnetlab replays its console
-bootstrap from the beginning, which is the part that failed:
+**Do not `docker restart` a wedged node.** containerlab wires each data link as a veth pair into the
+container's network namespace, and vrnetlab then bridges every `ethN` to the VM's `tapN` with `tc`
+filters installed once, at launch. Restarting the container destroys that namespace: the node comes
+back with only `lo` and `eth0`, its launcher waits forever for interfaces that never appear — and
+because the two ends of a veth die together, **each peer loses its interface too** (a restarted
+border takes `eth8` off both spines and `eth2` off the firewall). Recreating those interfaces by
+hand gives you a fabric that looks wired and silently drops flows, because the `tc` filters are gone.
+
+Re-run the deploy instead. `up.sh` calls `containerlab deploy --reconfigure`, which rebuilds every
+container and every link, and each switch gets a clean console bootstrap:
 
 ```bash
-docker restart clab-ai-fabric-fe-border2                               # ~10-14 min for an N9Kv
-docker inspect -f '{{.State.Health.Status}}' clab-ai-fabric-fe-border2
+systemctl stop fabric-up          # if it is still sitting in the Nexus wait
+./up.sh                           # or the systemd-run form above
 ```
 
-`nx-wait.sh` allows 40 minutes, so a restart inside that window lets the deploy carry on by itself.
-If it does time out, nothing is lost and nothing needs redeploying: `./nx-wait.sh`,
-`./nx-tcam-reload.sh` and then `./finish.sh` resume from there — all three are idempotent.
+Guest disks under `nodes/` are kept, so the Kubernetes bootstrap resumes in ~10 minutes instead of
+~40. If only the *wait* timed out and the switches are actually fine, nothing needs redeploying:
+`./nx-wait.sh`, `./nx-tcam-reload.sh` and `./finish.sh` resume from there — all three are idempotent.
 
 ---
 
