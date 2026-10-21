@@ -18,6 +18,7 @@ line 'https://harbor.platform.lab.ai'     harbor    harbor-admin         HARBOR_
 printf '%-34s %-18s %s\n' 'https://s3-console.platform.lab.ai' "$(get s3 minio-root rootUser)" "$(get s3 minio-root rootPassword)"
 line 'https://headlamp.platform.lab.ai'   headlamp  headlamp-admin-token token                 '<token login>'
 line 'https://inference.platform.lab.ai'  inference litellm-secret       master-key            '<Bearer>'
+line 'the lab model (Service llm, ai-sim)' ai-sim   llm-api-key          key                   '<Bearer>'
 echo
 echo 'Harbor: change the bootstrap password with  ssh -t <host> <repo>/harbor-password.sh'
 INNER

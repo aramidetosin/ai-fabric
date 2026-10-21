@@ -32,6 +32,7 @@ put s3        minio-root            rootUser               s3/root-user
 put s3        minio-root            rootPassword           s3/root-password
 put headlamp  headlamp-admin-token  token                  headlamp/admin-token
 put inference litellm-secret        master-key             inference/litellm-master-key
+put ai-sim    llm-api-key           key                    ai-sim/llm-api-key
 put webui     openrouter            api-key                webui/openrouter-api-key
 printf '%s\n' "ai-fabric lab credentials, copied from Kubernetes Secrets by secrets-to-s3.sh on $(date -u +%FT%TZ)" "" \
   "harbor/admin-password          Harbor     https://harbor.platform.lab.ai       user: admin" \
