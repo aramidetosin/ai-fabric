@@ -183,8 +183,25 @@ because the two ends of a veth die together, **each peer loses its interface too
 border takes `eth8` off both spines and `eth2` off the firewall). Recreating those interfaces by
 hand gives you a fabric that looks wired and silently drops flows, because the `tc` filters are gone.
 
-Re-run the deploy instead. `up.sh` calls `containerlab deploy --reconfigure`, which rebuilds every
-container and every link, and each switch gets a clean console bootstrap:
+**A wedged N9Kv can usually be recovered on its own, without redeploying.** An NX-OS VM that comes
+back from a reload with its management interface dead has often booted its Linux layer while the
+switch application never started. Its serial console is inside the container on port 5000, and that
+console is the *VM's* shell, not the container's -- check before you type anything:
+
+```bash
+N=clab-ai-fabric-fe-ctrl-leaf1
+docker exec $N sh -c '(printf "uname -r; ls -d /isan\n"; sleep 5) | timeout 12 telnet 127.0.0.1 5000'
+# the VM answers with its own kernel (5.10.x) and /isan; the CONTAINER has neither
+docker exec $N sh -c '(printf "reboot\n"; sleep 6) | timeout 12 telnet 127.0.0.1 5000'
+```
+
+NX-OS turns that into a sysrq crash-and-reboot, which looks alarming (`nxos_panic: Kernel panic`)
+but is how it restarts from bash. The VM reboots with its saved startup-config, the container and
+every veth stay in place, and the switch comes back in ~8-12 minutes with its TCAM carve active.
+Verify: `ssh ops@<mgmt> "show hardware access-list tcam region | include redirect"`.
+
+If that does not bring it back, re-run the deploy. `up.sh` calls `containerlab deploy --reconfigure`,
+which rebuilds every container and every link, and each switch gets a clean console bootstrap:
 
 ```bash
 systemctl stop fabric-up          # if it is still sitting in the Nexus wait
