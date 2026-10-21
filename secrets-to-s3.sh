@@ -6,8 +6,9 @@
 #   harbor/admin-password            Harbor  https://harbor.platform.lab.ai        user admin
 #   s3/root-user, s3/root-password   S3      https://s3-console.platform.lab.ai    (the key that opens this very bucket)
 #   headlamp/admin-token             Headlamp https://headlamp.platform.lab.ai     token login
-#   inference/litellm-master-key     bearer key of https://inference.platform.lab.ai
-#   webui/openrouter-api-key         YOUR OpenRouter API key (set by post-deploy.sh). Remove this line below if you do not want it in S3.
+#   inference/litellm-master-key     bearer key of https://inference.platform.lab.ai (only with post-deploy.sh --gateway)
+#   ai-sim/llm-api-key               bearer key of the lab's own model, Service llm in ai-sim (post-deploy.sh)
+#   webui/openrouter-api-key         YOUR OpenRouter API key, if you set one. Remove that line below to keep it out of S3.
 # NOT copied on purpose: the cluster CA's private key, the admin kubeconfig, and the switch/firewall image-default logins (the lab reaches
 # devices with SSH keys). WARNING: anyone holding the S3 root key can read all of this. The bucket is private (no anonymous policy);
 # a secrets manager (Vault + External Secrets) is the production answer, a bucket is a lab convenience.
@@ -39,7 +40,8 @@ printf '%s\n' "ai-fabric lab credentials, copied from Kubernetes Secrets by secr
   "s3/root-user, s3/root-password S3 / MinIO https://s3-console.platform.lab.ai   API: https://s3.platform.lab.ai" \
   "headlamp/admin-token           Headlamp   https://headlamp.platform.lab.ai     token login" \
   "inference/litellm-master-key   inference  https://inference.platform.lab.ai    Authorization: Bearer <key>" \
-  "webui/openrouter-api-key       OpenRouter API key used by Open WebUI and LiteLLM" "" \
+  "ai-sim/llm-api-key             the model  Service llm.ai-sim:8080 (OpenAI API)  Authorization: Bearer <key>" \
+  "webui/openrouter-api-key       OpenRouter API key, only if you set one" "" \
   "Source of truth = the Kubernetes Secrets; re-run the script after changing a password." \
   | s3 -o /dev/null -w '  HTTP %{http_code}  INDEX.txt\n' -X PUT -H 'Content-Type: text/plain' --data-binary @- "$EP/$BK/INDEX.txt"
 echo "objects now in $BK (name, bytes):"; s3 "$EP/$BK?list-type=2" | tr '<' '\n' | awk -F'>' '$1 == "Key" {k = $2} $1 == "Size" {printf "  %-34s %s\n", k, $2}'
