@@ -30,7 +30,11 @@ Per-device allocation if you need to size differently: Nexus 9300v **10 GB** eac
 control guests 8 GB, GPU guests 3 GB, storage guest 6 GB.
 
 **Run one big lab per host.** Sharing a host with another sizeable lab exhausts memory and the host
-starts shedding guests.
+starts shedding guests. Watch for *leftovers* too, not just running labs: another lab's pull-through
+registry caches keep holding ports 5002-5005 even when none of its own nodes are up, and this lab's
+caches then crash-loop. `registry-cache.sh start` now fails loudly and names the ports, because the
+symptom otherwise arrives 20 minutes later as `ImagePullBackOff` on every node with nothing pointing
+at a registry. Clear them with `docker ps | grep cache` and `docker stop <name>`.
 
 ---
 
