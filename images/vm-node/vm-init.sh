@@ -56,7 +56,7 @@ for k in $SMS; do LINK_FILES="$LINK_FILES$(lnk "eth$k" "$(mac $((16 + k)))" "")$
 if [ "$R" -gt 0 ]; then for r in $(seq 0 $((R - 1))); do LINK_FILES="$LINK_FILES$(lnk "gpu$r" "$(mac $((16 + RB + r)))" "MTUBytes=${NODE_MTU:-9000}\\n")$NL"; UNMANAGED="$UNMANAGED gpu$r"; done; fi
 export LINK_FILES UNMANAGED
 export OPERATOR_KEYS=$(grep -v "^\s*$" /authorized_keys 2>/dev/null | sed "s/^/\"/; s/$/\"/" | paste -sd, | sed "s/^/[/; s/$/]/")
-export NODE_ENV_B64=$( { env | grep -E '^(NODE_|OOB_|NTP_|CLUSTER_|API_|DOMAIN=|POD_CIDR=|SVC_CIDR=|K8S_|JOIN_|CERT_|GW_|LB_|DNS_|FABRIC_|HUBBLE_|CILIUM_|CERTMGR_|GATEWAY_|EXPECT_|BASTION_|PC_|DEMO_|BGP_|LB_MODE=|GPU_|RAIL_|MULTUS_|WHEREABOUTS_|LONGHORN_|WEBUI_|HEADLAMP_|METRICS_)' \
+export NODE_ENV_B64=$( { env | grep -E '^(NODE_|OOB_|NTP_|CLUSTER_|API_|DOMAIN=|POD_CIDR=|SVC_CIDR=|K8S_|JOIN_|CERT_|GW_|LB_|DNS_|FABRIC_|HUBBLE_|CILIUM_|CERTMGR_|GATEWAY_|EXPECT_|BASTION_|PC_|DEMO_|BGP_|LB_MODE=|GPU_|RAIL_|MULTUS_|WHEREABOUTS_|LONGHORN_|WEBUI_|HEADLAMP_|METRICS_|REGISTRY_)' \
   | while IFS='=' read -r k v; do printf '%s=%q\n' "$k" "$v"; done; } | base64 -w0 )
 b64() { base64 -w0 < "$1"; }
 export NETSETUP_B64=$(b64 /opt/node-files/netsetup.sh) BOOTSTRAP_B64=$(b64 /opt/node-files/cluster-bootstrap.sh)

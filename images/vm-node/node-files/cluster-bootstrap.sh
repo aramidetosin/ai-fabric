@@ -4,13 +4,18 @@
 # kube-vip ARP VIP, Cilium (KPR, geneve, L2 announcements, Gateway API, Hubble), cert-manager
 # with a cluster CA (self-signed, or the dns-b lab CA on site-a-nx) issuing the platform wildcard, a Gateway + HTTPRoutes. Then the worker
 # tier: Multus + whereabouts with one attachment per GPU rail, Longhorn on the storage node, and Open
-# WebUI (OpenRouter-backed, key from a Secret the operator creates) on a Longhorn volume.
+# WebUI (backed by the lab's own model, an optional key Secret) on a Longhorn volume.
 set -u
 set -a; . /etc/ai-fabric/node.env; set +a
 export KUBECONFIG=/etc/kubernetes/admin.conf
 export NODE_NAME=$(hostname)
 K=/opt/ai-fabric/k8s
 log() { echo "[bootstrap $(date +%H:%M:%S)] $*"; }
+# Point containerd at the host's pull-through caches BEFORE anything is pulled. Without this every one of the 39 nodes
+# fetches each image straight from the upstreams: ~2.5 GB each, slow enough that the Cilium install times out, and
+# Docker Hub's anonymous limit is reached long before Longhorn is done. registry-mirrors.sh is a no-op when the profile
+# sets no mirrors, and it is idempotent (harbor-trust.sh rewrites the same files later to add Harbor's proxy caches).
+[ -x /usr/local/bin/registry-mirrors.sh ] && /usr/local/bin/registry-mirrors.sh || true
 render() { envsubst < "$1"; }
 # A large rollout (39 guests on one host) makes the API time out now and then: every manifest apply retries instead of being skipped silently.
 apply() { local i; for i in $(seq 1 30); do render "$1" | kubectl apply -f - >/dev/null && return 0; log "apply $(basename "$1") failed (try $i), retrying"; sleep 10; done; log "apply $(basename "$1") GAVE UP"; return 1; }

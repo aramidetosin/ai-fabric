@@ -45,7 +45,7 @@ done
 ip addr replace "${NODE_IP}/${NODE_PREFIX:-24}" dev "$DATA_DEV"
 ip route replace "${FABRIC_CIDR:-10.167.0.0/16}" via "$NODE_GW" dev "$DATA_DEV"
 # Internet egress goes through the fabric: anycast gateway -> border leaves -> firewall (NAT on its external interface), as the
-# e& design. The management NIC (eth0, clab management network) keeps a default of its own in table $MGMT_TABLE for traffic sourced
+# Operator design. The management NIC (eth0, clab management network) keeps a default of its own in table $MGMT_TABLE for traffic sourced
 # from the management address only (operator SSH, the bastion pass-through), so replies never leave via the fabric.
 # This block has to be idempotent. Its own last line deletes eth0's default from the main table, so a RE-RUN (node-sync applying
 # network files live, finish.sh stage 3) reads nothing back there: it used to wait the full 90 s for a route it had itself removed
