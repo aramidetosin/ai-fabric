@@ -93,7 +93,7 @@ def topology():
     c.node("lan-gw", 1240, 225, 320, 80, "external gateway", "10.80.15.1\nnext hop of the firewall's default route", stroke=WAN, ssize=12)
     c.node("lan-dns", 1700, 225, 420, 80, "dns-b", "10.80.15.53: DNS + NTP for nodes, switches, firewall\nlab zones: *.platform.lab.ai > 10.1.1.200", stroke=WAN, ssize=12)
     c.node("lan-host", 2200, 225, 420, 80, "lab host", "10.80.15.10, runs containerlab and the bridge pnet0\nexternal-network client of the e2e trace", stroke=WAN, ssize=12)
-    c.node("lan-ws", 2790, 225, 580, 80, "winserver-rev3 / ubuntu-desktop", "10.80.15.100 / 10.80.15.103, external workstations\nhosts file: published names > 10.80.15.121, api.lab.ai > 10.1.1.20", stroke=WAN, ssize=12)
+    c.node("lan-ws", 2790, 225, 580, 80, "external workstations", "10.80.15.100 / 10.80.15.103, one Windows + one Ubuntu\nhosts file: published names > 10.80.15.121, api.lab.ai > 10.1.1.20", stroke=WAN, ssize=12)
     c.node("pnet0", 2080, 328, 2000, 44, "pnet0  -  external-network bridge on the lab host, port fw-ext > firewall ethernet1/5", stroke=WAN, size=14)
     for n in ("lan-gw", "lan-dns", "lan-host", "lan-ws"):
         x = c.box[n][0] + c.box[n][2] / 2

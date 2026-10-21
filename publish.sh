@@ -1,5 +1,5 @@
 #!/bin/bash
-# publish.sh: build the workstation kit for ai-fabric from the LIVE lab. Office-LAN workstations (ubuntu-desktop, winserver-rev3; both have
+# publish.sh: build the workstation kit for ai-fabric from the LIVE lab. Office-LAN workstations (one Ubuntu, one Windows; both have
 # an interface in 10.80.15.0/24 = the firewall's "internet" zone) reach the platform THROUGH THE FIREWALL, the convention of the
 # sibling labs already present on those machines:
 #   route   <node subnet> via <firewall outside address>            (firewall rule internet-to-inside-vips: tcp 80,443,6443)
@@ -29,9 +29,9 @@ API=$(python3 -c 'import gen; print(gen.API_VIP)')
 FWN=$(python3 -c 'import gen; print(gen.FW["mgmt"] + " fw-mgmt." + gen.DOMAIN if gen.LAB_CA else "")')
 { echo '# BEGIN ai-fabric'; echo "$FWOUT $(echo $NAMES | tr '\n' ' ' | sed 's/ *$//')"; echo "$API api.$DOMAIN"; [ -n "$FWN" ] && echo "$FWN"; echo '# END ai-fabric'; } > "$P/hosts-block.txt"
 
-cat > "$P/ubuntu-desktop.sh" <<'EOS'
+cat > "$P/ubuntu.sh" <<'EOS'
 #!/bin/bash
-# ai-fabric workstation setup (Ubuntu + NetworkManager). Run ON the workstation:   sudo bash ~/ai-fabric-publish/ubuntu-desktop.sh
+# ai-fabric workstation setup (Ubuntu + NetworkManager). Run ON the workstation:   sudo bash ~/ai-fabric-publish/ubuntu.sh
 # Idempotent. Adds a persistent route to the lab's node subnet via the lab firewall, puts the lab's bastion BIND first in the DNS
 # server list (existing servers are kept after it), trusts the lab CA (system store + the user's NSS databases). Nothing is removed.
 set -euo pipefail
@@ -88,5 +88,5 @@ $c = Import-Certificate -FilePath "$D\ai-fabric-cluster-ca.crt" -CertStoreLocati
 Get-Content "$D\urls.txt" | ForEach-Object { $h = ([uri]$_).Host; $a = (Resolve-DnsName $h -Type A -ErrorAction SilentlyContinue | Select-Object -First 1).IPAddress
   $code = & curl.exe -sS --ssl-no-revoke --max-time 10 -o NUL -w "%{http_code}" $_ 2>&1 | Select-Object -Last 1; "  {0,-36} -> {1,-10} HTTP {2}" -f $h, $a, $code }
 EOS
-chmod +x "$P/ubuntu-desktop.sh"
+chmod +x "$P/ubuntu.sh"
 echo "kit in $(pwd)/$P:"; ls -1 "$P"; echo; cat "$P/lab.env"; echo; cat "$P/urls.txt"

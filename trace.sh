@@ -2,7 +2,7 @@
 # trace.sh [outdir]: end-to-end trace of ai-fabric from three clients to the inference endpoint (adapted from <reference-platform>/trace.sh):
 #   pc-1 / pc-2      enterprise side of the firewall (zone enterprise, rule enterprise-to-fabric; enterprise-to-data on site-a-nx)
 #   office LAN       site-a's own 10.80.15.10 -> firewall OUTSIDE address 10.80.15.121 (zone internet, rules internet-to-inside-vips +
-#                    dnat-gateway-vip) -- the path the office workstations (ubuntu-desktop, winserver) use
+#                    dnat-gateway-vip) -- the path the office workstations use
 # Every control-plane lookup on the way (raw/trace.txt), captures at each hop (captures/*.pcap + decoded .txt), the recorded curls, TRACE.md.
 # Since 2026-10-04 the gateway has a model served from the lab's own GPU nodes (inference-local-model.sh). When it is there, the trace sends the
 # WORKING request by default: a chat completion for that model, answered HTTP 200 by Gateway VIP -> Envoy -> APISIX -> LiteLLM -> EAST-WEST to a

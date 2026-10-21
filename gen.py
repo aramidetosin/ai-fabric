@@ -38,8 +38,8 @@ def _env(name, default=None):
 #               192.168.1.250 on the home LAN, registry pull-through cache on the management gateway. The OOB switch is a vEX too:
 #               the Cumulus VX image has 16 data ports and this lab needs 25.
 PROFILES = {
-    # 32 GPU nodes at 3 GB: 6 GB x 32 = 192 GB does NOT fit beside this host's other VMs (winserver alone is 64 GB) -- measured 2026-09-20,
-    # the host OOM-killed winserver 14 times before the guests were stopped. 3 GB / 2 vCPU is what site-b runs the same 32-node workload on.
+    # 32 GPU nodes at 3 GB: 6 GB x 32 = 192 GB does NOT fit beside this host's other VMs (one of them alone is 64 GB) -- measured 2026-09-20,
+    # the host OOM-killed that VM 14 times before the guests were stopped. 3 GB / 2 vCPU is what site-b runs the same 32-node workload on.
     # 6 control nodes like site-b: ctrl1-3 are the control plane, ctrl4-6 join as workers and carry Harbor / cert-manager / inference / Headlamp.
     # That pushes ctrl4-6 onto 10.1.1.14-.16, so the storage node moves to .18 (and its management address to .118), exactly as on site-b.
     "site-a": dict(fe_nos="cumulus", n_ctrl=6, n_gpu=32, gpu_pairs=4, gpu_mem=3072, gpu_cpus=2, pc_mgmt=(161, 162), storage_ip="10.1.1.18", storage_mgmt=118,
@@ -51,8 +51,8 @@ PROFILES = {
                        # bastion becomes authoritative for the /24, so any office address NOT listed here answers NXDOMAIN to the lab's
                        # resolver clients -- drop lan_ptrs if the office DNS ever needs to answer for that subnet instead.
                        lan_cidr="10.80.15.0/24",
-                       lan_ptrs="10.80.15.121=fw-outside 10.80.15.10=site-a 10.80.15.103=ubuntu-desktop "
-                                "10.80.15.100=winserver-rev3 10.80.15.1=office-gw"),
+                       lan_ptrs="10.80.15.121=fw-outside 10.80.15.10=site-a 10.80.15.103=workstation-ubuntu "
+                                "10.80.15.100=workstation-win 10.80.15.1=office-gw"),
     "site-b":   dict(fe_nos="vex", n_ctrl=6, n_gpu=32, gpu_pairs=2, gpu_mem=3072, gpu_cpus=2, pc_mgmt=(161, 162),      # GPU nodes use mgmt .121-.152
                        storage_ip="10.1.1.18", storage_mgmt=118,                                                     # LAB: .16 is ctrl6 here
                        fw_e5="192.168.1.250/24", fw_e5_gw="192.168.1.1",
@@ -892,7 +892,7 @@ def fw_xml():
              + rule("fabric-to-internet", "fabric", "internet", "any", "any", "any", "allow")
              + rule("enterprise-to-internet", "enterprise", "internet", "any", "any", "any", "allow")
              + rule("oob-to-internet", "oob", "internet", "any", "any", "any", "allow")
-             # Office-LAN workstations (ubuntu-desktop, winserver: 10.80.15.0/24 = zone internet) reach the platform THROUGH the firewall,
+             # Office-LAN workstations (10.80.15.0/24 = zone internet) reach the platform THROUGH the firewall,
              # as in the sibling Nexus / FTOS labs: a static route to the node subnet via ethernet1/5 (or the DNAT below), the bastion as resolver.
              + (f'<entry name="internet-to-inside-vips"><from><member>internet</member></from><to><member>fabric</member></to>'
                 f'<source><member>any</member></source><destination><member>{FE_NET}</member><member>{FW["e5"].split("/")[0]}</member></destination>'   # routed VIPs + the DNAT pre-NAT address
