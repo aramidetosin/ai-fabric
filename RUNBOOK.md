@@ -148,6 +148,35 @@ systemd-run --unit=fabric-up --collect --setenv=HOME=/root \
 # follow:  tail -f up.log      state: systemctl is-active fabric-up
 ```
 
+### Deploying with `containerlab deploy` directly
+
+`up.sh` is a wrapper, not a replacement: the topology is an ordinary containerlab file, so you can
+drive it yourself.
+
+```bash
+set -a; . ./.env; set +a
+python3 gen.py                        # writes ai-fabric.clab.yml, configs/<device>.cfg, bootstrap/fw.xml
+containerlab deploy -t ai-fabric.clab.yml --reconfigure --max-workers 8
+```
+
+`examples/ai-fabric.clab.example.yml` is that topology for the `site-b-nx` profile (67 nodes, 437
+links) with placeholder images and fake secrets, committed so you can read it before running anything.
+The real one is generated — it carries your image tags and kubeadm secrets, which is why `*.clab.yml`
+is gitignored. `python3 gen.py --dns-zones <dir>` writes the DNS zones and nothing else.
+
+A bare deploy gives you running containers, **not a working cluster**. It skips everything `up.sh`
+does around it, each of which exists because of a failure it prevents:
+
+| `up.sh` also does | why |
+|---|---|
+| holds the guests (`shared/hold-guests`) until the fabric converges | guests that boot first put LACP and MACs onto leaves still being configured, and the data plane keeps stale entries |
+| `nx-wait.sh` — every Nexus docker-healthy **and** answering as `ops` | docker-healthy only means vrnetlab finished, not that the config applied |
+| `nx-tcam-reload.sh` | vPC fabric peering needs a TCAM carve, which needs a save and a reload |
+| re-runs `pc-init.sh` | the PA-VM finishing its boot bounces the PC links, and the kernel drops routes out of a downed device |
+| `./finish.sh` | the nine stages below, from the Kubernetes bootstrap to the workstation kit |
+
+Use the bare deploy to bring the topology up and inspect it; use `./up.sh` to get a lab that works.
+
 `finish.sh` then runs nine idempotent stages, logged with elapsed time:
 
 1. switches and firewall healthy

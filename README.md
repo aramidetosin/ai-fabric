@@ -320,6 +320,11 @@ scripts/           # the gateway's own tooling, driven by post-deploy.sh --gatew
                    # routes), deploy-inference.sh (APISIX + LiteLLM), openrouter-secret.sh (the key Secret, prompts, needs a terminal),
                    # webui-add-inference.sh, webui-hide-batch.sh. None of it is needed for the lab's own model.
 ```
+Topology: `python3 gen.py` writes `ai-fabric.clab.yml`, then `containerlab deploy -t ai-fabric.clab.yml
+--reconfigure`. `examples/ai-fabric.clab.example.yml` is that file with placeholder images and fake
+secrets, readable without running anything. A bare deploy brings the containers up but skips the switch
+readiness waits, the TCAM carve, the PC re-init and `finish.sh` -- see RUNBOOK.md section 4.
+
 Access (operator keys in `common/authorized_keys`): Cumulus `ssh cumulus@<mgmt>`, OcNOS `ssh admin@<mgmt>`, guests `ssh admin@<mgmt>`,
 `kubectl` from `docker exec -it clab-ai-fabric-bastion bash -l`. Addresses are in `mgmt-hosts.txt`; helpers in `lib.sh`
 (`CVX`, `OCS`, `OCN`, `H`, `X`, `K`). `ai-fabric` and `ai-fabric-refplat` cannot run together (same management subnet and firewall outside address).
