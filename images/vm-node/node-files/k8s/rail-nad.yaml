@@ -1,0 +1,9 @@
+# One macvlan attachment per GPU rail (rail R sits on gpu(R-1); in ai-fabric a REAL NIC cabled to backend rail leaf R),
+# addresses from whereabouts in the rail's /24 above the node addresses.
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: rail-${R}
+  namespace: gpu
+spec:
+  config: '{"cniVersion":"0.3.1","type":"macvlan","master":"gpu${R0}","mode":"bridge","mtu":${NODE_MTU},"ipam":{"type":"whereabouts","range":"${RAIL_PREFIX}.${R}.0/24","range_start":"${RAIL_PREFIX}.${R}.100","range_end":"${RAIL_PREFIX}.${R}.199","gateway":"${RAIL_PREFIX}.${R}.1","routes":[{"dst":"${RAIL_PREFIX}.0.0/16","gw":"${RAIL_PREFIX}.${R}.1"}]}}'

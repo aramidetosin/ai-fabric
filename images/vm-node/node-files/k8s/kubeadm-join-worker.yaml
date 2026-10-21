@@ -1,0 +1,20 @@
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: "api.${DOMAIN}:6443"
+    token: "${JOIN_TOKEN}"
+    unsafeSkipCAVerification: true
+  timeout: 10m0s
+nodeRegistration:
+  name: ${NODE_NAME}
+  kubeletExtraArgs:
+  - name: node-ip
+    value: "${NODE_IP}"
+  # labels and the GPU taint are registered with the node itself, so a node that joins after the init node's labelling
+  # pass (a storage VM whose packages installed late) still comes up with its class; the restricted
+  # node-role.kubernetes.io/* labels are added by the init node
+  - name: node-labels
+    value: "${NODE_LABELS}"
+  - name: register-with-taints
+    value: "${NODE_TAINTS}"

@@ -1,0 +1,11 @@
+[Unit]
+Description=FlashBlade-style storage management API (management VIP on VLAN 200, or the OOB address; provisions Longhorn PVCs)
+After=ai-fabric-netsetup.service fb-vip.service
+
+[Service]
+ExecStart=/usr/local/bin/fb-api-start.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

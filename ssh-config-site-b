@@ -1,0 +1,138 @@
+# ai-fabric on site-b: passwordless SSH from the Mac to every node through site-b (the lab's management subnet 172.21.21.0/24 is
+# routed to the office from this Mac, so a jump host is needed). Use:  echo 'Include ~/.ssh/ai-fabric-site-b' >> ~/.ssh/config  (top of file),
+# copy this file to ~/.ssh/ai-fabric-site-b, then e.g.  ssh he-fe-spine1   ssh he-be-leaf1   ssh he-gpu17
+Host he-*
+    ProxyJump site-b
+    User admin
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    LogLevel ERROR
+
+Host he-fe-spine1
+    HostName 172.21.21.11
+Host he-fe-spine2
+    HostName 172.21.21.12
+Host he-fe-gpu-leaf1
+    HostName 172.21.21.13
+Host he-fe-gpu-leaf2
+    HostName 172.21.21.14
+Host he-fe-stor-leaf1
+    HostName 172.21.21.15
+Host he-fe-stor-leaf2
+    HostName 172.21.21.16
+Host he-fe-ctrl-leaf1
+    HostName 172.21.21.17
+Host he-fe-ctrl-leaf2
+    HostName 172.21.21.18
+Host he-fe-border1
+    HostName 172.21.21.19
+Host he-fe-border2
+    HostName 172.21.21.20
+Host he-fe-gpu-leaf3
+    HostName 172.21.21.22
+Host he-fe-gpu-leaf4
+    HostName 172.21.21.23
+Host he-oob-sw
+    HostName 172.21.21.21
+Host he-be-spine1
+    HostName 172.21.21.41
+Host he-be-spine2
+    HostName 172.21.21.42
+Host he-be-spine3
+    HostName 172.21.21.43
+Host he-be-spine4
+    HostName 172.21.21.44
+Host he-be-leaf1
+    HostName 172.21.21.51
+Host he-be-leaf2
+    HostName 172.21.21.52
+Host he-be-leaf3
+    HostName 172.21.21.53
+Host he-be-leaf4
+    HostName 172.21.21.54
+Host he-be-leaf5
+    HostName 172.21.21.55
+Host he-be-leaf6
+    HostName 172.21.21.56
+Host he-be-leaf7
+    HostName 172.21.21.57
+Host he-be-leaf8
+    HostName 172.21.21.58
+Host he-ctrl1
+    HostName 172.21.21.111
+Host he-ctrl2
+    HostName 172.21.21.112
+Host he-ctrl3
+    HostName 172.21.21.113
+Host he-ctrl4
+    HostName 172.21.21.114
+Host he-ctrl5
+    HostName 172.21.21.115
+Host he-ctrl6
+    HostName 172.21.21.116
+Host he-gpu1
+    HostName 172.21.21.121
+Host he-gpu2
+    HostName 172.21.21.122
+Host he-gpu3
+    HostName 172.21.21.123
+Host he-gpu4
+    HostName 172.21.21.124
+Host he-gpu5
+    HostName 172.21.21.125
+Host he-gpu6
+    HostName 172.21.21.126
+Host he-gpu7
+    HostName 172.21.21.127
+Host he-gpu8
+    HostName 172.21.21.128
+Host he-gpu9
+    HostName 172.21.21.129
+Host he-gpu10
+    HostName 172.21.21.130
+Host he-gpu11
+    HostName 172.21.21.131
+Host he-gpu12
+    HostName 172.21.21.132
+Host he-gpu13
+    HostName 172.21.21.133
+Host he-gpu14
+    HostName 172.21.21.134
+Host he-gpu15
+    HostName 172.21.21.135
+Host he-gpu16
+    HostName 172.21.21.136
+Host he-gpu17
+    HostName 172.21.21.137
+Host he-gpu18
+    HostName 172.21.21.138
+Host he-gpu19
+    HostName 172.21.21.139
+Host he-gpu20
+    HostName 172.21.21.140
+Host he-gpu21
+    HostName 172.21.21.141
+Host he-gpu22
+    HostName 172.21.21.142
+Host he-gpu23
+    HostName 172.21.21.143
+Host he-gpu24
+    HostName 172.21.21.144
+Host he-gpu25
+    HostName 172.21.21.145
+Host he-gpu26
+    HostName 172.21.21.146
+Host he-gpu27
+    HostName 172.21.21.147
+Host he-gpu28
+    HostName 172.21.21.148
+Host he-gpu29
+    HostName 172.21.21.149
+Host he-gpu30
+    HostName 172.21.21.150
+Host he-gpu31
+    HostName 172.21.21.151
+Host he-gpu32
+    HostName 172.21.21.152
+Host he-storage
+    HostName 172.21.21.118

@@ -1,0 +1,11 @@
+[Unit]
+Description=Storage management VIP (FlashBlade-style FM1/FM2 on two unbonded links; the VIP follows the link that reaches the gateway)
+After=ai-fabric-netsetup.service
+
+[Service]
+ExecStart=/usr/local/bin/fb-vip.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

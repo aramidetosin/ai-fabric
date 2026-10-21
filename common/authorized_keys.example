@@ -1,0 +1,10 @@
+# Copy to common/authorized_keys and put the public key(s) that should reach the lab
+# guests, bastion and PCs here - one per line. The real file is gitignored.
+#
+#   cp common/authorized_keys.example common/authorized_keys
+#   cat ~/.ssh/id_ed25519.pub >> common/authorized_keys
+#
+# NX-OS accepts a single sshkey per user, so set LAB_WORKSTATION_KEY_COMMENT in .env to
+# the comment of the key the Nexus switches should use.
+#
+#   ssh-ed25519 AAAA... you@your-host

@@ -1,0 +1,13 @@
+[Unit]
+Description=Weft -> site-b lab alias 172.21.121.0/24: source NAT of the Weft VM's subnet into Tailscale
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/nftables.d/weft-alias-office.nft
+ExecStop=/usr/sbin/nft delete table ip weft_alias
+
+[Install]
+WantedBy=multi-user.target

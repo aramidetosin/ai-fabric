@@ -1,0 +1,21 @@
+[Unit]
+Description=ai-fabric containerlab lab: start it after a host boot, power the guests off cleanly at shutdown
+Documentation=file:/root/ai-fabric/README.md
+After=network-online.target docker.service containerd.service clab-mgmt-nat.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+# simple + RemainAfterExit: the 40-60 min start does not hold the boot up, and the unit stays active so ExecStop runs at shutdown
+Type=simple
+RemainAfterExit=yes
+WorkingDirectory=/root/ai-fabric
+Environment=HOME=/root BOOT_VALIDATE=1
+ExecStart=/root/ai-fabric/boot.sh
+ExecStop=/root/ai-fabric/stop.sh
+TimeoutStopSec=900
+StandardOutput=append:/var/log/ai-fabric-lab.log
+StandardError=append:/var/log/ai-fabric-lab.log
+
+[Install]
+WantedBy=multi-user.target

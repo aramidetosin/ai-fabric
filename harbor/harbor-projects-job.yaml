@@ -1,0 +1,36 @@
+# Proxy-cache projects: Harbor pulls from the upstream registry once and serves every node from its own store. The job authenticates with the
+# admin Secret INSIDE the cluster; nothing prints or exports the password. Idempotent (409 = already there).
+apiVersion: batch/v1
+kind: Job
+metadata: {name: harbor-proxy-projects, namespace: harbor}
+spec:
+  backoffLimit: 10
+  ttlSecondsAfterFinished: 86400
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: api
+        image: ghcr.io/srl-labs/network-multitool
+        env:
+        - {name: PW, valueFrom: {secretKeyRef: {name: harbor-admin, key: HARBOR_ADMIN_PASSWORD}}}
+        command:
+        - sh
+        - -c
+        - |
+          H=http://harbor-core.harbor.svc.cluster.local/api/v2.0
+          until curl -s -m 5 $H/ping | grep -q Pong; do echo "waiting for harbor-core"; sleep 10; done
+          reg() { c=$(curl -s -o /dev/null -w '%{http_code}' -u "admin:$PW" -H 'Content-Type: application/json' -X POST $H/registries -d "{\"name\":\"$1\",\"type\":\"$2\",\"url\":\"$3\",\"insecure\":false}"); echo "registry $1: HTTP $c"; }
+          prj() { id=$(curl -s -u "admin:$PW" "$H/registries?q=name%3D$2" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1)
+                  c=$(curl -s -o /dev/null -w '%{http_code}' -u "admin:$PW" -H 'Content-Type: application/json' -X POST $H/projects -d "{\"project_name\":\"$1\",\"registry_id\":$id,\"public\":true,\"metadata\":{\"public\":\"true\"}}"); echo "project $1 -> registry $2 (id $id): HTTP $c"; }
+          reg dockerhub docker-hub https://hub.docker.com
+          # Harbor 2.15 refuses proxy-cache projects on registry type "quay" ("unsupported registry type quay"): quay.io goes in as a plain
+          # Docker v2 registry. An entry left over with the old type is removed first.
+          old=$(curl -s -u "admin:$PW" "$H/registries?q=name%3Dquay" | grep -o '"id":[0-9]*,"name":"quay","status":"[a-z]*","type":"quay"' | sed 's/"id":\([0-9]*\).*/\1/')
+          [ -z "$old" ] || curl -s -o /dev/null -u "admin:$PW" -X DELETE "$H/registries/$old"
+          reg quay docker-registry https://quay.io
+          reg ghcr github-ghcr https://ghcr.io
+          reg k8s docker-registry https://registry.k8s.io
+          reg nvcr docker-registry https://nvcr.io      # NVIDIA NGC (network-operator, rdma-shared-dev-plugin), anonymous pulls of public images
+          prj proxy-dockerhub dockerhub; prj proxy-quay quay; prj proxy-ghcr ghcr; prj proxy-k8s k8s; prj proxy-nvcr nvcr
+          curl -s -u "admin:$PW" "$H/projects?page_size=50" | tr ',' '\n' | grep '"name"' | tr -d '"' | sort | tr '\n' ' '; echo

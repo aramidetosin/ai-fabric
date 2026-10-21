@@ -1,0 +1,16 @@
+[Unit]
+Description=ai-fabric cluster self-bootstrap (kubeadm init/join, Cilium, cert-manager, Gateway, demo)
+After=ai-fabric-netsetup.service containerd.service network.target
+Requires=ai-fabric-netsetup.service containerd.service
+
+[Service]
+Environment=HOME=/root
+Type=simple
+ExecStart=/usr/local/bin/cluster-bootstrap.sh
+Restart=on-failure
+RestartSec=20
+StandardOutput=append:/var/log/ai-fabric-bootstrap.log
+StandardError=append:/var/log/ai-fabric-bootstrap.log
+
+[Install]
+WantedBy=multi-user.target

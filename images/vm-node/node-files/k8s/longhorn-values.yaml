@@ -1,0 +1,39 @@
+# Longhorn on one storage node: disks are created only on nodes labelled node.longhorn.io/create-default-disk=true
+# (the storage node), every volume keeps one replica, and the class is the cluster default. The manager and
+# CSI driver run on every node, GPU taint included, so any node can mount a volume.
+defaultSettings:
+  createDefaultDiskLabeledNodes: true
+  defaultDataPath: /var/lib/longhorn
+  defaultReplicaCount: 1
+  replicaSoftAntiAffinity: true
+  nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+  taintToleration: "nvidia.com/gpu=present:NoSchedule"
+  upgradeChecker: false
+persistence:
+  defaultClass: true
+  defaultClassReplicaCount: 1
+  reclaimPolicy: Delete
+global:
+  tolerations:
+  - key: nvidia.com/gpu
+    operator: Exists
+    effect: NoSchedule
+longhornManager:
+  tolerations:
+  - key: nvidia.com/gpu
+    operator: Exists
+    effect: NoSchedule
+longhornDriver:
+  tolerations:
+  - key: nvidia.com/gpu
+    operator: Exists
+    effect: NoSchedule
+csi:
+  attacherReplicaCount: 1
+  provisionerReplicaCount: 1
+  resizerReplicaCount: 1
+  snapshotterReplicaCount: 1
+longhornUI:
+  replicas: 1
+preUpgradeChecker:
+  jobEnabled: false

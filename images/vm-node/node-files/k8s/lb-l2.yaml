@@ -1,0 +1,51 @@
+# LoadBalancer VIP pool + L2/ARP announcement, reference style: pool inside the node subnet,
+# announced on bond0 by the ingress-labelled nodes (worker policy) and, for services labelled
+# ai-fabric.lab/lb-pool=control, by the control nodes (control policy).
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: ${CLUSTER_NAME}-lb-worker-pool
+  labels:
+    app.kubernetes.io/name: cilium-lb
+    app.kubernetes.io/component: worker-pool
+spec:
+  blocks:
+  - start: ${LB_POOL_START}
+    stop: ${LB_POOL_END}
+  serviceSelector:
+    matchExpressions:
+    - key: ai-fabric.lab/lb-pool
+      operator: NotIn
+      values: ["control"]
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: ${CLUSTER_NAME}-l2-worker-policy
+spec:
+  nodeSelector:
+    matchLabels:
+      node-role.ai-fabric.lab/ingress: "true"
+  interfaces: ["bond0"]
+  externalIPs: true
+  loadBalancerIPs: true
+  serviceSelector:
+    matchExpressions:
+    - key: ai-fabric.lab/lb-pool
+      operator: NotIn
+      values: ["control"]
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: ${CLUSTER_NAME}-l2-control-policy
+spec:
+  nodeSelector:
+    matchLabels:
+      node-role.ai-fabric.lab/control: "true"
+  interfaces: ["bond0"]
+  externalIPs: true
+  loadBalancerIPs: true
+  serviceSelector:
+    matchLabels:
+      ai-fabric.lab/lb-pool: control

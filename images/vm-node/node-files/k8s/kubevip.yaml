@@ -1,0 +1,48 @@
+# kube-vip control-plane VIP, static pod on every control plane node (copied from the reference build:
+# ARP mode on bond0, leader election, services disabled). Written by cluster-bootstrap.sh.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-vip
+  namespace: kube-system
+spec:
+  priorityClassName: system-node-critical
+  containers:
+  - name: kube-vip
+    image: ghcr.io/kube-vip/kube-vip:v1.1.2
+    imagePullPolicy: IfNotPresent
+    args: ["manager"]
+    env:
+    - {name: vip_arp, value: "true"}
+    - {name: port, value: "6443"}
+    - {name: vip_interface, value: "bond0"}
+    - {name: vip_subnet, value: "32"}
+    - {name: cp_enable, value: "true"}
+    - {name: cp_namespace, value: "kube-system"}
+    - {name: vip_ddns, value: "false"}
+    - {name: svc_enable, value: "false"}
+    - {name: vip_leaderelection, value: "true"}
+    - {name: vip_leaselockname, value: "kube-vip-lock"}
+    - {name: vip_leaseduration, value: "5"}
+    - {name: vip_renewdeadline, value: "3"}
+    - {name: vip_retryperiod, value: "1"}
+    - {name: address, value: "${API_VIP}"}
+    resources:
+      requests: {cpu: 100m, memory: 128Mi}
+      limits: {cpu: 250m, memory: 256Mi}
+    securityContext:
+      capabilities:
+        drop: ["ALL"]
+        add: ["NET_ADMIN", "NET_RAW", "SYS_TIME"]
+    volumeMounts:
+    - name: kubeconfig
+      mountPath: /etc/kubernetes/admin.conf
+      readOnly: true
+  hostAliases:
+  - ip: 127.0.0.1
+    hostnames: ["kubernetes"]
+  hostNetwork: true
+  volumes:
+  - name: kubeconfig
+    hostPath:
+      path: "${KUBEVIP_KUBECONFIG}"

@@ -1,0 +1,21 @@
+# Alias subnet for tools that also see ANOTHER lab on 172.21.21.0/24 (Weft runs on site-a, whose lab uses the same management subnet):
+#   172.21.121.X  <->  172.21.21.X on this host (1:1), reached over Tailscale (this host advertises 172.21.121.0/24).
+# Loaded by weft-alias-nat.service. Own table: nothing else on the host is touched.
+table ip ai_fabric_alias
+delete table ip ai_fabric_alias
+table ip ai_fabric_alias {
+  chain prerouting {
+    type nat hook prerouting priority dstnat; policy accept;
+    ip daddr 172.21.121.0/24 dnat ip prefix to ip daddr map { 172.21.121.0/24 : 172.21.21.0/24 }
+    # SNMP traps: the lab devices send them to this host's management-bridge address; relay them to site-a's Tailscale address, where the
+    # existing udp/162 DNAT hands them to the Weft VM. (172.29.129.150 cannot be used from here: this host's ip rule 5100 keeps that subnet local.)
+    iifname != "tailscale0" ip saddr 172.21.21.0/24 ip daddr 172.21.21.1 udp dport 162 dnat to 100.107.123.24:162
+  }
+  chain postrouting {
+    type nat hook postrouting priority srcnat; policy accept;
+    # replies must come back through this host's connection tracking whatever the switches' routing says
+    iifname "tailscale0" ip daddr 172.21.21.0/24 masquerade
+    # traps leave with the ALIAS address of their sender, so Weft attributes them to the right Site-3 device
+    ip saddr 172.21.21.0/24 ip daddr 100.107.123.24 udp dport 162 snat ip prefix to ip saddr map { 172.21.21.0/24 : 172.21.121.0/24 }
+  }
+}

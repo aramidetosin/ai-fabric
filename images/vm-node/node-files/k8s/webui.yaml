@@ -1,0 +1,99 @@
+# Open WebUI: inference front end for the validation. Its OpenAI-compatible backend is WEBUI_API_BASE, which
+# defaults to the lab's own model (Service llm in namespace ai-sim, served from the GPU nodes by llm-serve.sh)
+# -- so the lab needs no external API key. The bearer token is Secret webui/inference-key (key api-key), created
+# by the operator with post-deploy.sh and OPTIONAL: without it Open WebUI still starts, it just has no model yet.
+# Point WEBUI_API_BASE at any other OpenAI-compatible endpoint (OpenRouter, the inference gateway) to switch.
+# Data on a Longhorn volume, single-user mode (no sign-up), published as webui.platform.<domain> via the Gateway.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: webui
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: open-webui-data
+  namespace: webui
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-webui
+  namespace: webui
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: open-webui}
+  template:
+    metadata:
+      labels: {app: open-webui}
+    spec:
+      nodeSelector: {node-role.ai-fabric.lab/storage: "true"}
+      containers:
+      - name: open-webui
+        image: ${WEBUI_IMAGE}
+        ports:
+        - containerPort: 8080
+        env:
+        - {name: WEBUI_NAME, value: "${CLUSTER_NAME} inference"}
+        - {name: WEBUI_AUTH, value: "false"}
+        - {name: ENABLE_SIGNUP, value: "false"}
+        - {name: ENABLE_OLLAMA_API, value: "false"}
+        - {name: OPENAI_API_BASE_URL, value: "${WEBUI_API_BASE}"}
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef: {name: inference-key, key: api-key, optional: true}
+        - {name: DEFAULT_MODELS, value: "${WEBUI_MODEL}"}
+        - {name: ENABLE_OPENAI_API, value: "true"}
+        volumeMounts:
+        - name: data
+          mountPath: /app/backend/data
+        # Open WebUI needs ~2 minutes before it listens (migrations, model cache). A readiness probe that starts after 20 s only produces
+        # "Readiness probe failed ... connection refused" warnings; the startup probe holds readiness back until the app is really up.
+        startupProbe:
+          httpGet: {path: /health, port: 8080}
+          initialDelaySeconds: 180
+          periodSeconds: 10
+          failureThreshold: 30
+        readinessProbe:
+          httpGet: {path: /health, port: 8080}
+          periodSeconds: 10
+        resources:
+          requests: {cpu: 250m, memory: 1Gi}
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: open-webui-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-webui
+  namespace: webui
+spec:
+  selector: {app: open-webui}
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: open-webui
+  namespace: webui
+spec:
+  parentRefs:
+  - name: gateway
+    namespace: gateway
+  hostnames: ["${WEBUI_HOST}"]
+  rules:
+  - backendRefs:
+    - name: open-webui
+      port: 80

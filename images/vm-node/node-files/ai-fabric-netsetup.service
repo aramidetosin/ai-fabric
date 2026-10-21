@@ -1,0 +1,17 @@
+[Unit]
+Description=ai-fabric fabric bond + routes + DNS for this k8s node
+DefaultDependencies=no
+# After systemd-networkd has configured eth0: on a REBOOT this unit used to run first (on the first boot cloud-init starts it late, which hid
+# it), found no management address/gateway, left a second default route on eth0, and networkd then removed its policy-routing rules.
+After=local-fs.target systemd-networkd.service systemd-networkd-wait-online.service network-online.target
+Wants=network-online.target
+Before=containerd.service kubelet.service ai-fabric-cluster.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/netsetup.sh
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target

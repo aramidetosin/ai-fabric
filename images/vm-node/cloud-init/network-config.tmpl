@@ -1,0 +1,8 @@
+version: 2
+ethernets:
+  eth0:
+    match: {macaddress: "${MAC0}"}
+    set-name: eth0
+    addresses: ["${MGMT_IP}"]
+    routes: [{to: default, via: ${MGMT_GW}}]
+    nameservers: {addresses: [8.8.8.8, 1.1.1.1]}

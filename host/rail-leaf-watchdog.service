@@ -1,0 +1,12 @@
+[Unit]
+Description=ai-fabric: reload a rail leaf whose OcNOS VM has stopped forwarding
+Documentation=file:/root/ai-fabric/host/rail-leaf-watchdog.sh
+After=docker.service
+ConditionPathExists=/root/ai-fabric/host/rail-leaf-watchdog.sh
+
+[Service]
+Type=oneshot
+ExecStart=/root/ai-fabric/host/rail-leaf-watchdog.sh
+# The script stands down on its own while ai-fabric-redeploy / ai-fabric-accept / ai-fabric-lab are running, and only acts on a
+# rail that was already down on the previous pass, so a slow start or a drill never triggers a reload.
+TimeoutStartSec=900

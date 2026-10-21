@@ -1,0 +1,74 @@
+#cloud-config
+# ai-fabric REFPLAT VM node: first-boot configuration. Same node scripts as the container nodes of the ai-fabric labs,
+# plus the Kubernetes packages, containerd, helm and the Longhorn prerequisites from the distribution repos.
+hostname: ${HOSTNAME}
+fqdn: ${HOSTNAME}.${DOMAIN}
+manage_etc_hosts: localhost
+ssh_pwauth: true
+disable_root: false
+chpasswd:
+  expire: false
+  users:
+  - {name: root, password: ${LAB_ROOT_PASSWORD}, type: text}
+  - {name: admin, password: ${LAB_ADMIN_PASSWORD}, type: text}
+users:
+- name: admin
+  primary_group: admin
+  shell: /bin/bash
+  sudo: "ALL=(ALL) NOPASSWD:ALL"
+  lock_passwd: false
+  ssh_authorized_keys: ${OPERATOR_KEYS}
+# the container's /shared (lab-wide bind: kubeconfig + cluster CA published by the init node for the bastion and PCs) via 9p
+mounts:
+- [shared, /shared, 9p, "trans=virtio,version=9p2000.L,rw,_netdev,nofail", "0", "0"]
+package_update: true
+packages: [containerd, ethtool, open-iscsi, nfs-common, gettext-base, jq, curl, gnupg, ca-certificates, iputils-ping, tcpdump, dnsutils, bash-completion, containernetworking-plugins, e2fsprogs, openssl, lldpd]
+write_files:
+- {path: /etc/ai-fabric/node.env, permissions: "0600", encoding: b64, content: "${NODE_ENV_B64}"}
+- {path: /usr/local/bin/netsetup.sh, permissions: "0755", encoding: b64, content: "${NETSETUP_B64}"}
+- {path: /usr/local/bin/cluster-bootstrap.sh, permissions: "0755", encoding: b64, content: "${BOOTSTRAP_B64}"}
+- {path: /etc/systemd/system/ai-fabric-netsetup.service, permissions: "0644", encoding: b64, content: "${NETSETUP_UNIT_B64}"}
+- {path: /etc/systemd/system/ai-fabric-cluster.service, permissions: "0644", encoding: b64, content: "${CLUSTER_UNIT_B64}"}
+${K8S_FILES}
+${TOOL_FILES}
+${CA_FILES}
+${LINK_FILES}- path: /etc/systemd/network/05-fabric-unmanaged.network
+  content: |
+    [Match]
+    Name=${UNMANAGED}
+    [Link]
+    Unmanaged=yes
+- path: /etc/systemd/timesyncd.conf.d/ai-fabric.conf
+  content: |
+    [Time]
+    NTP=${NTP_SERVER}
+    FallbackNTP=8.8.8.8
+- path: /etc/modules-load.d/ai-fabric.conf
+  content: |
+    overlay
+    br_netfilter
+    iscsi_tcp
+- path: /etc/sysctl.d/90-ai-fabric.conf
+  content: |
+    net.ipv4.ip_forward = 1
+    net.bridge.bridge-nf-call-iptables = 1
+    net.bridge.bridge-nf-call-ip6tables = 1
+- path: /etc/profile.d/kubectl.sh
+  content: |
+    export KUBECONFIG=/etc/kubernetes/admin.conf
+    alias k=kubectl
+final_message: "ai-fabric REFPLAT VM node ready after $UPTIME seconds"
+runcmd:
+- [sh, -c, "mkdir -p /root/.ssh && cp /home/admin/.ssh/authorized_keys /root/.ssh/authorized_keys && chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys"]
+- [sh, -c, "locale-gen en_US.UTF-8 && update-locale LANG=en_US.UTF-8"]
+- [sh, -c, "mkdir -p /etc/apt/keyrings && for i in 1 2 3 4 5 6 7 8 9 10; do curl -fsSL --retry 5 --retry-delay 6 --retry-all-errors --connect-timeout 15 https://pkgs.k8s.io/core:/stable:/${K8S_MINOR}/deb/Release.key | gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${K8S_MINOR}/deb/ /' > /etc/apt/sources.list.d/kubernetes.list && apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq kubelet kubeadm kubectl && break; echo k8s-packages-retry-$i; sleep 30; done"]
+- [sh, -c, "for i in 1 2 3 4 5 6 7 8 9 10; do curl -fsSL --retry 5 --retry-delay 6 --retry-all-errors --connect-timeout 20 https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash && break; echo helm-retry-$i; sleep 30; done; command -v helm >/dev/null || { for i in 1 2 3 4 5 6; do curl -fsSL --retry 5 --retry-delay 6 --retry-all-errors --connect-timeout 20 https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz -o /tmp/helm.tgz && tar -xzf /tmp/helm.tgz -C /tmp && install -m755 /tmp/linux-amd64/helm /usr/local/bin/helm && break; echo helm-tarball-retry-$i; sleep 30; done; }"]
+- [sh, -c, "modprobe overlay; modprobe br_netfilter; modprobe iscsi_tcp; sysctl --system >/dev/null"]
+- [sh, -c, "swapoff -a; sed -i '/swap/d' /etc/fstab"]
+- [sh, -c, "mkdir -p /etc/containerd && containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml && systemctl restart containerd"]
+- [sh, -c, "mkdir -p /opt/cni/bin && cp -n /usr/lib/cni/* /opt/cni/bin/ 2>/dev/null || true"]
+- [sh, -c, "apt-mark hold kubelet kubeadm kubectl"]
+- [sh, -c, "blkid /dev/vdb >/dev/null 2>&1 || mkfs.ext4 -q -L longhorn /dev/vdb; mkdir -p /var/lib/longhorn; grep -q longhorn /etc/fstab || echo 'LABEL=longhorn /var/lib/longhorn ext4 defaults 0 2' >> /etc/fstab; mount -a"]
+- [sh, -c, "systemctl enable --now iscsid open-iscsi containerd kubelet; systemctl restart systemd-timesyncd"]
+- [sh, -c, "rm -f /etc/resolv.conf; systemctl disable --now systemd-resolved 2>/dev/null; printf 'nameserver 8.8.8.8\\n' > /etc/resolv.conf"]
+- [sh, -c, "systemctl daemon-reload && systemctl enable --now ai-fabric-netsetup.service ai-fabric-cluster.service"]

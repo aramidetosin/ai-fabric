@@ -1,0 +1,41 @@
+# Harbor (chart harbor/harbor 1.19.2 = Harbor 2.15.2) for ai-fabric, following the CNCF article "Deploying Harbor on Kubernetes using Helm"
+# and its production advice: TLS in front, object storage for the blobs, persistent volumes for everything else.
+#   expose     chart-native Gateway API route on the lab Gateway (TLS = the Gateway's *.platform.lab.ai certificate from the cluster CA)
+#   blobs      S3 (MinIO on the storage node = FlashBlade S3 stand-in); redirects off because clients cannot reach the S3 service themselves
+#   state      PostgreSQL, Redis, jobservice, Trivy on Longhorn volumes
+#   placement  the worker class of the control leaf pair (ctrl4-6)
+#   admin      password comes from Secret harbor/harbor-admin (never in this file; the operator sets his own with harbor-password.sh)
+expose:
+  type: route
+  tls: {enabled: false}
+  route:
+    parentRefs: [{name: gateway, namespace: gateway, group: gateway.networking.k8s.io, kind: Gateway}]
+    hosts: ["harbor.platform.lab.ai"]
+externalURL: https://harbor.platform.lab.ai
+existingSecretAdminPassword: harbor-admin
+existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+persistence:
+  enabled: true
+  resourcePolicy: keep
+  persistentVolumeClaim:
+    jobservice: {jobLog: {storageClass: longhorn, size: 1Gi}}
+    database: {storageClass: longhorn, size: 5Gi}
+    redis: {storageClass: longhorn, size: 1Gi}
+    trivy: {storageClass: longhorn, size: 5Gi}
+  imageChartStorage:
+    disableredirect: true
+    type: s3
+    s3:
+      existingSecret: harbor-s3
+      region: us-east-1
+      bucket: harbor
+      regionendpoint: http://minio.s3.svc.cluster.local:9000
+      secure: false
+      v4auth: true
+portal:     {nodeSelector: {node-role.kubernetes.io/worker: ""}}
+core:       {nodeSelector: {node-role.kubernetes.io/worker: ""}}
+jobservice: {nodeSelector: {node-role.kubernetes.io/worker: ""}}
+registry:   {nodeSelector: {node-role.kubernetes.io/worker: ""}}
+trivy:      {nodeSelector: {node-role.kubernetes.io/worker: ""}}
+database:   {internal: {nodeSelector: {node-role.kubernetes.io/worker: ""}}}
+redis:      {internal: {nodeSelector: {node-role.kubernetes.io/worker: ""}}}

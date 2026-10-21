@@ -1,0 +1,17 @@
+# site-a side of the Weft <-> site-b alias path (172.21.121.0/24 = site-b's lab, reached over Tailscale). Own table, nothing else touched.
+table ip weft_alias
+delete table ip weft_alias
+table ip weft_alias {
+  # Weft VM -> site-b lab: site-b must answer to a TAILSCALE address (its ip rule 5100 sends 172.29.129.0/24 out of its LAN uplink)
+  chain postrouting {
+    type nat hook postrouting priority srcnat; policy accept;
+    ip saddr 172.29.129.0/24 ip daddr 172.21.121.0/24 oifname "tailscale0" masquerade
+  }
+  # site-b lab -> Weft trap receiver: keep the sender's alias address. Tailscale's subnet-router rule would masquerade these packets to this
+  # host's nat0 address (every home trap then looks like 172.29.129.254). The FIRST nat chain that binds a connection wins, so this chain runs
+  # just before Tailscale's and binds the flow to its own, unchanged, source address.
+  chain keep_trap_source {
+    type nat hook postrouting priority srcnat - 10; policy accept;
+    ip saddr 172.21.121.0/24 ip daddr 172.29.129.150 udp dport 162 snat ip prefix to ip saddr map { 172.21.121.0/24 : 172.21.121.0/24 }
+  }
+}

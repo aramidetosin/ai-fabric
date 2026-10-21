@@ -1,0 +1,11 @@
+[Unit]
+Description=ai-fabric: check the rail leaves every 10 minutes
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=10min
+AccuracySec=30s
+Unit=rail-leaf-watchdog.service
+
+[Install]
+WantedBy=timers.target

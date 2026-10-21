@@ -1,0 +1,13 @@
+[Unit]
+Description=ai-fabric: 1:1 NAT alias 172.21.121.0/24 -> lab management 172.21.21.0/24 for Weft (over Tailscale)
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/nftables.d/ai-fabric-weft-alias.nft
+ExecStop=/usr/sbin/nft delete table ip ai_fabric_alias
+
+[Install]
+WantedBy=multi-user.target

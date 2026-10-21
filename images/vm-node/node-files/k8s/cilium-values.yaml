@@ -1,0 +1,50 @@
+# Cilium helm values, mirroring the reference cluster's cilium-config (read live 2026-09-02):
+# kube-proxy replacement, tunnel/geneve, cluster-pool IPAM, devices=bond0, L2 announcements,
+# Gateway API with Envoy as a DaemonSet, Hubble relay + UI + metrics.
+cluster:
+  name: ${CLUSTER_NAME}
+  id: 1
+kubeProxyReplacement: true
+k8sServiceHost: ${API_VIP}
+k8sServicePort: 6443
+routingMode: tunnel
+tunnelProtocol: geneve
+ipam:
+  mode: cluster-pool
+  operator:
+    clusterPoolIPv4PodCIDRList: ["${POD_CIDR}"]
+    clusterPoolIPv4MaskSize: 24
+devices: [${CILIUM_DEVICES}]
+# Multus runs beside Cilium: Cilium must not delete other CNI configurations from /etc/cni/net.d
+cni:
+  exclusive: false
+bgpControlPlane:
+  enabled: ${CILIUM_BGP}
+bpf:
+  # iptables masquerade: pod egress to the internet leaves through the management NIC, which is not a
+  # Cilium device, and BPF masquerade only covers the listed devices
+  masquerade: false
+  # world-bound pod traffic must follow the node's routing table (default route on the management NIC);
+  # BPF host routing would redirect it to a Cilium device, the fabric bond, where nothing routes it onward
+  hostLegacyRouting: true
+l2announcements:
+  enabled: true
+externalIPs:
+  enabled: true
+k8sClientRateLimit:
+  qps: 50
+  burst: 100
+envoy:
+  enabled: true
+gatewayAPI:
+  enabled: true
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+  metrics:
+    enabled: ["dns:query;ignoreAAAA", "drop", "tcp", "flow", "icmp", "http"]
+operator:
+  replicas: 2

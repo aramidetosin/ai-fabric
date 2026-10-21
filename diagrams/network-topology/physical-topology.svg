@@ -1,0 +1,281 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1780" viewBox="0 0 2400 1780" role="img">
+<title>Physical topology</title>
+<desc>production physical design, 24 September 2026. Unresolved design decisions are explicitly labelled.</desc>
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+<text x="55" y="70.7" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700" fill="#172B4D">production AI network topology</text>
+<text x="57" y="112.7" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#53657E">32 B300 servers / 256 GPUs · Frontend EVPN-VXLAN · Eight backend rails · Plane 1</text>
+<text x="2100" y="59.2" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">PHYSICAL DESIGN  /  01</text>
+<text x="2100" y="89.3" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">24 SEPTEMBER 2026</text>
+<rect x="40" y="145" width="1910" height="715" rx="12" fill="#F3F6FC" stroke="#DCE4F0" stroke-width="1.5"/>
+<rect x="1980" y="145" width="380" height="715" rx="12" fill="#F5F7F9" stroke="#DCE2E9" stroke-width="1.5"/>
+<text x="65" y="184.7" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#4167B2">FRONTEND  /  Cisco Nexus</text>
+<text x="2000" y="183.8" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#778395">OOB / MANAGEMENT</text>
+<polyline points="139.5,450 920,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="165.5,450 1390,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="339.5,450 946,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="365.5,450 1416,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="584.5,450 972,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="610.5,450 1442,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="809.5,450 998,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="835.5,450 1468,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1104.5,450 1024,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1130.5,450 1494,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1329.5,450 1050,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1355.5,450 1520,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1624.5,450 1076,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1650.5,450 1546,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1839.5,450 1102,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="1865.5,450 1572,315" fill="none" stroke="#A5B9DD" stroke-width="2.2" stroke-linejoin="round"/>
+<text x="70" y="248.5" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#4167B2">2 × 400G from every leaf to EACH spine</text>
+<text x="70" y="285.9" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#53657E">32 fabric links · OSPF unnumbered · iBGP EVPN, spines RR</text>
+<text x="70" y="319.9" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#53657E">&lt;data VLAN&gt; · VRF k8s  |  &lt;stor-mgmt VLAN&gt; · VRF stor-mgmt</text>
+<text x="70" y="346.78" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#53657E">&lt;bastion VLAN&gt; · VRF bastion  |  VNIs: placeholders</text>
+<rect x="820" y="215" width="400" height="100" rx="10" fill="#E4ECFB" stroke="#4167B2" stroke-width="2"/>
+<rect x="820" y="215" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1020.0" y="249.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">fe-spine1</text>
+<text x="1020.0" y="281.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Cisco N9364D-GX2A · iBGP RR</text>
+<text x="1020.0" y="306.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Physical IP / ASN: TBD</text>
+<rect x="1290" y="215" width="400" height="100" rx="10" fill="#E4ECFB" stroke="#4167B2" stroke-width="2"/>
+<rect x="1290" y="215" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1490.0" y="249.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">fe-spine2</text>
+<text x="1490.0" y="281.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Cisco N9364D-GX2A · iBGP RR</text>
+<text x="1490.0" y="306.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Physical IP / ASN: TBD</text>
+<rect x="65" y="450" width="175" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="65" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="152.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-border1</text>
+<text x="152.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="152.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="265" y="450" width="175" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="265" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="352.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-border2</text>
+<text x="352.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="352.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="500" y="450" width="195" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="500" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="597.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-ctrl-leaf1</text>
+<text x="597.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="597.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="725" y="450" width="195" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="725" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="822.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-ctrl-leaf2</text>
+<text x="822.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="822.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="1020" y="450" width="195" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="1020" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1117.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-gpu-leaf1</text>
+<text x="1117.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="1117.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="1245" y="450" width="195" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="1245" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1342.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-gpu-leaf2</text>
+<text x="1342.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="1342.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="1540" y="450" width="195" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="1540" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1637.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-gpu-leaf3</text>
+<text x="1637.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="1637.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<rect x="1765" y="450" width="175" height="100" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="1765" y="450" width="5" height="100" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1852.5" y="482.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#172B4D">fe-gpu-leaf4</text>
+<text x="1852.5" y="513.3" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">N9332D-GX2B</text>
+<text x="1852.5" y="535.06" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">IP / ASN: TBD</text>
+<polyline points="597.5,550 605.0,680" fill="none" stroke="#4167B2" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="822.5,550 815.0,680" fill="none" stroke="#469485" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1117.5,550 1125.0,680" fill="none" stroke="#4167B2" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1342.5,550 1335.0,680" fill="none" stroke="#469485" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1637.5,550 1640.0,680" fill="none" stroke="#4167B2" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1852.5,550 1840.0,680" fill="none" stroke="#469485" stroke-width="3" stroke-linejoin="round"/>
+<rect x="493" y="560" width="435" height="81" rx="0" fill="#F3F6FC" stroke="#F3F6FC" stroke-width="0"/>
+<rect x="1013" y="560" width="435" height="81" rx="0" fill="#F3F6FC" stroke="#F3F6FC" stroke-width="0"/>
+<rect x="1533" y="560" width="412" height="81" rx="0" fill="#F3F6FC" stroke="#F3F6FC" stroke-width="0"/>
+<text x="526" y="586.0" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#4167B2">11 × 100G + 1 × 1G mgmt per leaf</text>
+<text x="1045" y="586.0" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#4167B2">16 × 100G per leaf</text>
+<text x="1556" y="586.0" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#4167B2">16 × 100G per leaf</text>
+<text x="521" y="626.2" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">vPC Fabric Peering · no peer-link cable</text>
+<text x="1035" y="626.2" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">vPC Fabric Peering · no peer-link cable</text>
+<text x="1542" y="626.2" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">vPC Fabric Peering · no peer-link cable</text>
+<rect x="500" y="680" width="420" height="150" rx="10" fill="#FFFFFF" stroke="#4167B2" stroke-width="2"/>
+<rect x="500" y="680" width="5" height="150" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="710.0" y="712.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">Control, bastion and storage</text>
+<text x="710.0" y="744.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">ctrl1–6 + bastion: 2 × 100G each</text>
+<text x="710.0" y="767.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">FlashBlade ×2: 4 × 100G data each</text>
+<text x="710.0" y="790.2800000000001" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">+ 1 × 1G mgmt each (QSA) → own leaf</text>
+<text x="710.0" y="813.32" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">One 8 × 100G bond (vPC), &lt;data VLAN&gt;</text>
+<rect x="1020" y="680" width="420" height="130" rx="10" fill="#EDFAF5" stroke="#4167B2" stroke-width="2"/>
+<rect x="1020" y="680" width="5" height="130" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1230.0" y="714.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">gpu1–gpu16  /  16 B300 servers</text>
+<text x="1230.0" y="746.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">128 GPUs · 2 × 100G per server</text>
+<text x="1230.0" y="771.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">8 × 400G rail NICs per server</text>
+<text x="1230.0" y="797.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">1 × 1G BMC per server</text>
+<rect x="1540" y="680" width="400" height="130" rx="10" fill="#EDFAF5" stroke="#4167B2" stroke-width="2"/>
+<rect x="1540" y="680" width="5" height="130" rx="2" fill="#4167B2" stroke="#4167B2" stroke-width="0"/>
+<text x="1740.0" y="713.8" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#172B4D">gpu17–gpu32  /  16 B300 servers</text>
+<text x="1740.0" y="745.1" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">128 GPUs · 2 × 100G per server</text>
+<text x="1740.0" y="769.4200000000001" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">8 × 400G rail NICs per server</text>
+<text x="1740.0" y="793.74" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">1 × 1G BMC per server</text>
+<polyline points="152,550 152,680" fill="none" stroke="#BC6666" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="352,550 352,680" fill="none" stroke="#BC6666" stroke-width="3" stroke-linejoin="round"/>
+<rect x="72" y="568" width="355" height="67" rx="0" fill="#F3F6FC" stroke="#F3F6FC" stroke-width="0"/>
+<text x="78" y="593.0" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#A44F4F">Border ↔ firewall handoff</text>
+<rect x="65" y="680" width="375" height="150" rx="10" fill="#FFF2F1" stroke="#B76565" stroke-width="2"/>
+<rect x="65" y="680" width="5" height="150" rx="2" fill="#B76565" stroke="#B76565" stroke-width="0"/>
+<text x="252.5" y="714.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">Firewall</text>
+<text x="252.5" y="746.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Sub-interface per VRF; zones</text>
+<text x="252.5" y="771.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">data · stor-mgmt · bastion</text>
+<text x="252.5" y="797.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">eBGP default per VRF → type-5</text>
+<text x="252.5" y="822.8" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">OOB gateway (zone oob)</text>
+<text x="84" y="853.3" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#53657E">Borders are L3-only; not a vPC pair.</text>
+<rect x="2000" y="215" width="340" height="100" rx="10" fill="#FFFFFF" stroke="#778395" stroke-width="2"/>
+<rect x="2000" y="215" width="5" height="100" rx="2" fill="#778395" stroke="#778395" stroke-width="0"/>
+<text x="2170.0" y="249.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">Logical OOB switch</text>
+<text x="2170.0" y="281.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Model / switch count: TBD</text>
+<text x="2170.0" y="306.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">OOB subnet: TBD</text>
+<polyline points="2170,315 2170,362" fill="none" stroke="#778395" stroke-width="2" stroke-linejoin="round" stroke-dasharray="8 7"/>
+<rect x="2000" y="362" width="340" height="204" rx="10" fill="#FFFFFF" stroke="#778395" stroke-width="2"/>
+<rect x="2000" y="362" width="5" height="204" rx="2" fill="#778395" stroke="#778395" stroke-width="0"/>
+<text x="2170.0" y="395.8" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#172B4D">51 recorded 1G links</text>
+<text x="2170.0" y="427.1" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">12 backend switch management</text>
+<text x="2170.0" y="451.42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">32 GPU server BMC</text>
+<text x="2170.0" y="475.74" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">6 control + 1 bastion BMC</text>
+<text x="2170.0" y="500.06000000000006" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">(FlashBlade management moved</text>
+<text x="2170.0" y="524.38" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">to the control leaves)</text>
+<rect x="2000" y="590" width="340" height="250" rx="12" fill="#FFF8E9" stroke="#DEC59B" stroke-width="1.5"/>
+<text x="2018" y="630.7" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#91652A">Capacity and policy</text>
+<text x="2018" y="669.1" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">Add 10 frontend mgmt0 ports</text>
+<text x="2018" y="693.4200000000001" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">(vPC peer-keepalive) + 1 fw</text>
+<text x="2018" y="717.74" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">uplink: 62 ports before spares.</text>
+<text x="2018" y="742.0600000000001" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E"></text>
+<text x="2018" y="766.38" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">data → stor-mgmt: TCP 443</text>
+<text x="2018" y="790.7" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">via the firewall. No fabric</text>
+<text x="2018" y="815.02" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">zone reaches OOB.</text>
+<polyline points="440,770 467,770 467,883 1964,883 1964,266 2000,266" fill="none" stroke="#778395" stroke-width="2" stroke-linejoin="round" stroke-dasharray="8 7"/>
+<text x="650" y="910.2" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#778395">OOB gateway on the firewall</text>
+<rect x="40" y="921" width="2320" height="669" rx="12" fill="#FBF7F0" stroke="#EBDDCA" stroke-width="1.5"/>
+<text x="65" y="963.7" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#BA702A">BACKEND  /  UfiSpace S9321-64E + OcNOS</text>
+<text x="65" y="1004.0" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">Each coloured line below represents 32 dedicated 400G links to one rail leaf.</text>
+<polyline points="1230,810 1230,933" fill="none" stroke="#258068" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1740,810 1740,933" fill="none" stroke="#258068" stroke-width="3" stroke-linejoin="round"/>
+<rect x="1030" y="933" width="890" height="78" rx="10" fill="#EFF8F3" stroke="#258068" stroke-width="2"/>
+<rect x="1030" y="933" width="5" height="78" rx="2" fill="#258068" stroke="#258068" stroke-width="0"/>
+<text x="1475.0" y="966.8" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#172B4D">Every B300 server connects to all eight rails</text>
+<text x="1475.0" y="998.1" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">256 × 400G independent links · NIC R → be-leafR · CX8 port 2 uncabled</text>
+<polyline points="1060,1011 192,1100" fill="none" stroke="#236FAD" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1177,1011 478,1100" fill="none" stroke="#258068" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1294,1011 764,1100" fill="none" stroke="#B96D22" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1411,1011 1050,1100" fill="none" stroke="#765BA7" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1528,1011 1336,1100" fill="none" stroke="#AE5360" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1645,1011 1622,1100" fill="none" stroke="#287F8A" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1762,1011 1908,1100" fill="none" stroke="#8B781D" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1879,1011 2194,1100" fill="none" stroke="#9A567F" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="163.5,1230 330,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="182.5,1230 860,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="201.5,1230 1390,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="220.5,1230 1920,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="449.5,1230 360,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="468.5,1230 890,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="487.5,1230 1420,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="506.5,1230 1950,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="735.5,1230 390,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="754.5,1230 920,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="773.5,1230 1450,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="792.5,1230 1980,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1021.5,1230 420,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1040.5,1230 950,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1059.5,1230 1480,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1078.5,1230 2010,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1307.5,1230 450,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1326.5,1230 980,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1345.5,1230 1510,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1364.5,1230 2040,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1593.5,1230 480,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1612.5,1230 1010,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1631.5,1230 1540,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1650.5,1230 2070,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1879.5,1230 510,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1898.5,1230 1040,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1917.5,1230 1570,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="1936.5,1230 2100,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="2165.5,1230 540,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="2184.5,1230 1070,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="2203.5,1230 1600,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<polyline points="2222.5,1230 2130,1415" fill="none" stroke="#C4B7A6" stroke-width="2.1" stroke-linejoin="round"/>
+<rect x="685" y="1283" width="1340" height="103" rx="9" fill="#FBF7F0" stroke="#EBDDCA" stroke-width="1"/>
+<text x="705" y="1321.6" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#BA702A">Each grey line = 4 × 800G routed links  /  128 physical links total</text>
+<text x="714" y="1364.8" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#53657E">eBGP + BFD · 16 uplinks per leaf · BGP unnumbered · PFC + ECN (production switch config)</text>
+<rect x="65" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#236FAD" stroke-width="2"/>
+<rect x="65" y="1100" width="5" height="130" rx="2" fill="#236FAD" stroke="#236FAD" stroke-width="0"/>
+<text x="192.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf1  /  rail 1</text>
+<text x="192.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65201 · VLAN 10</text>
+<text x="192.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.1.0/24 · gateway .1</text>
+<text x="192.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="351" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#258068" stroke-width="2"/>
+<rect x="351" y="1100" width="5" height="130" rx="2" fill="#258068" stroke="#258068" stroke-width="0"/>
+<text x="478.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf2  /  rail 2</text>
+<text x="478.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65202 · VLAN 20</text>
+<text x="478.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.2.0/24 · gateway .1</text>
+<text x="478.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="637" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#B96D22" stroke-width="2"/>
+<rect x="637" y="1100" width="5" height="130" rx="2" fill="#B96D22" stroke="#B96D22" stroke-width="0"/>
+<text x="764.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf3  /  rail 3</text>
+<text x="764.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65203 · VLAN 30</text>
+<text x="764.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.3.0/24 · gateway .1</text>
+<text x="764.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="923" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#765BA7" stroke-width="2"/>
+<rect x="923" y="1100" width="5" height="130" rx="2" fill="#765BA7" stroke="#765BA7" stroke-width="0"/>
+<text x="1050.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf4  /  rail 4</text>
+<text x="1050.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65204 · VLAN 40</text>
+<text x="1050.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.4.0/24 · gateway .1</text>
+<text x="1050.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="1209" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#AE5360" stroke-width="2"/>
+<rect x="1209" y="1100" width="5" height="130" rx="2" fill="#AE5360" stroke="#AE5360" stroke-width="0"/>
+<text x="1336.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf5  /  rail 5</text>
+<text x="1336.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65205 · VLAN 50</text>
+<text x="1336.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.5.0/24 · gateway .1</text>
+<text x="1336.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="1495" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#287F8A" stroke-width="2"/>
+<rect x="1495" y="1100" width="5" height="130" rx="2" fill="#287F8A" stroke="#287F8A" stroke-width="0"/>
+<text x="1622.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf6  /  rail 6</text>
+<text x="1622.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65206 · VLAN 60</text>
+<text x="1622.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.6.0/24 · gateway .1</text>
+<text x="1622.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="1781" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#8B781D" stroke-width="2"/>
+<rect x="1781" y="1100" width="5" height="130" rx="2" fill="#8B781D" stroke="#8B781D" stroke-width="0"/>
+<text x="1908.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf7  /  rail 7</text>
+<text x="1908.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65207 · VLAN 70</text>
+<text x="1908.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.7.0/24 · gateway .1</text>
+<text x="1908.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="2067" y="1100" width="254" height="130" rx="10" fill="#FFFFFF" stroke="#9A567F" stroke-width="2"/>
+<rect x="2067" y="1100" width="5" height="130" rx="2" fill="#9A567F" stroke="#9A567F" stroke-width="0"/>
+<text x="2194.0" y="1132.9" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172B4D">be-leaf8  /  rail 8</text>
+<text x="2194.0" y="1164.2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">AS 65208 · VLAN 80</text>
+<text x="2194.0" y="1187.24" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">172.16.8.0/24 · gateway .1</text>
+<text x="2194.0" y="1210.28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">32 × 400G server links</text>
+<rect x="280" y="1415" width="360" height="115" rx="10" fill="#FFFFFF" stroke="#BA702A" stroke-width="2"/>
+<rect x="280" y="1415" width="5" height="115" rx="2" fill="#BA702A" stroke="#BA702A" stroke-width="0"/>
+<text x="460.0" y="1449.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">be-spine1</text>
+<text x="460.0" y="1481.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">AS 65200 · 192.168.100.1</text>
+<text x="460.0" y="1506.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">32 × 800G ports toward 8 leaves</text>
+<rect x="810" y="1415" width="360" height="115" rx="10" fill="#FFFFFF" stroke="#BA702A" stroke-width="2"/>
+<rect x="810" y="1415" width="5" height="115" rx="2" fill="#BA702A" stroke="#BA702A" stroke-width="0"/>
+<text x="990.0" y="1449.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">be-spine2</text>
+<text x="990.0" y="1481.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">AS 65200 · 192.168.100.2</text>
+<text x="990.0" y="1506.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">32 × 800G ports toward 8 leaves</text>
+<rect x="1340" y="1415" width="360" height="115" rx="10" fill="#FFFFFF" stroke="#BA702A" stroke-width="2"/>
+<rect x="1340" y="1415" width="5" height="115" rx="2" fill="#BA702A" stroke="#BA702A" stroke-width="0"/>
+<text x="1520.0" y="1449.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">be-spine3</text>
+<text x="1520.0" y="1481.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">AS 65200 · 192.168.100.3</text>
+<text x="1520.0" y="1506.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">32 × 800G ports toward 8 leaves</text>
+<rect x="1870" y="1415" width="360" height="115" rx="10" fill="#FFFFFF" stroke="#BA702A" stroke-width="2"/>
+<rect x="1870" y="1415" width="5" height="115" rx="2" fill="#BA702A" stroke="#BA702A" stroke-width="0"/>
+<text x="2050.0" y="1449.7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#172B4D">be-spine4</text>
+<text x="2050.0" y="1481.0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">AS 65200 · 192.168.100.4</text>
+<text x="2050.0" y="1506.6" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#53657E">32 × 800G ports toward 8 leaves</text>
+<text x="65" y="1569.8" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#53657E">Per rail leaf: 12.8 Tb/s down + 12.8 Tb/s up in nominal port capacity. Same rail stays L2; cross-rail uses leaf → spine → leaf.</text>
+<rect x="40" y="1610" width="2320" height="78" rx="12" fill="#FFF8E9" stroke="#DEC59B" stroke-width="1.5"/>
+<text x="60" y="1642.1" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#91652A">TO FINALIZE</text>
+<text x="228" y="1643.9" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#172B4D">FE/OOB addresses, VLANs, VNIs and ASNs · FE uplink ports</text>
+<text x="228" y="1673.2" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#53657E">Links are bundled for readability. Rates are design values. Backend PFC (priority 3) + ECN as in the production switch configuration (AI-Leaf / AI-Spine ECN_PFC_Lossless).</text>
+<polyline points="55,1710 2345,1710" fill="none" stroke="#CCD6E2" stroke-width="1" stroke-linejoin="round"/>
+<text x="55" y="1745.1" text-anchor="start" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#53657E">Source: existing production physical design and cabling matrices. This diagram intentionally does not substitute the virtual lab’s IPs or switch models.</text>
+</svg>

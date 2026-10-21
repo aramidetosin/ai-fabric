@@ -1,0 +1,49 @@
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: InitConfiguration
+bootstrapTokens:
+- token: "${JOIN_TOKEN}"
+  ttl: "8760h0m0s"
+  usages: ["signing", "authentication"]
+  groups: ["system:bootstrappers:kubeadm:default-node-token"]
+certificateKey: "${CERT_KEY}"
+localAPIEndpoint:
+  advertiseAddress: ${NODE_IP}
+  bindPort: 6443
+nodeRegistration:
+  name: ${NODE_NAME}
+  kubeletExtraArgs:
+  - name: node-ip
+    value: "${NODE_IP}"
+skipPhases:
+- addon/kube-proxy
+---
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: ClusterConfiguration
+clusterName: ${CLUSTER_NAME}
+kubernetesVersion: ${K8S_VERSION}
+controlPlaneEndpoint: "api.${DOMAIN}:6443"
+apiServer:
+  certSANs:
+  - api.${DOMAIN}
+  - ${API_VIP}
+  - kubernetes.default.svc.${DOMAIN}
+networking:
+  dnsDomain: cluster.local
+  podSubnet: ${POD_CIDR}
+  serviceSubnet: ${SVC_CIDR}
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+failSwapOn: false
+# absolute eviction thresholds: the nodes share one large host filesystem, so the default percentages
+# (10% nodefs, 15% imagefs) would mean hundreds of GiB and evict pods on a healthy host
+# image garbage collection likewise: the default 85 % high-water mark is measured on the shared host filesystem, which a
+# node cannot free, so the collector would run (and fail) on every pass; it runs only above 98 % here
+imageGCHighThresholdPercent: 98
+imageGCLowThresholdPercent: 95
+evictionHard:
+  nodefs.available: "10Gi"
+  imagefs.available: "10Gi"
+  nodefs.inodesFree: "5%"
+  memory.available: "200Mi"

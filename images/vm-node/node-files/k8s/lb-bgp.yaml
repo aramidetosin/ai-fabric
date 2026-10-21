@@ -1,0 +1,76 @@
+# BGP announcement option: a routed pool outside every node subnet, advertised as /32s by every ingress node to
+# both switches of the gateway pair over the dedicated peering VLAN (bond0.111). Cilium 1.19 serves these as v2.
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: ${CLUSTER_NAME}-lb-pool
+  labels:
+    app.kubernetes.io/name: cilium-lb
+    app.kubernetes.io/component: bgp-pool
+spec:
+  blocks:
+  - cidr: ${LB_POOL_CIDR}
+  serviceSelector:
+    matchExpressions:
+    - key: ai-fabric.lab/lb-pool
+      operator: NotIn
+      values: ["control"]
+---
+apiVersion: cilium.io/${BGP_API}
+kind: CiliumBGPPeerConfig
+metadata:
+  name: gateway-pair
+spec:
+  timers:
+    connectRetryTimeSeconds: 5
+    holdTimeSeconds: 9
+    keepAliveTimeSeconds: 3
+  gracefulRestart:
+    enabled: true
+    restartTimeSeconds: 15
+  families:
+  - afi: ipv4
+    safi: unicast
+    advertisements:
+      matchLabels:
+        advertise: lb-vips
+---
+apiVersion: cilium.io/${BGP_API}
+kind: CiliumBGPClusterConfig
+metadata:
+  name: ${CLUSTER_NAME}-nodes
+spec:
+  nodeSelector:
+    matchLabels:
+      node-role.ai-fabric.lab/ingress: "true"
+  bgpInstances:
+  - name: cilium
+    localASN: ${BGP_LOCAL_ASN}
+    peers:
+    - name: pair-a
+      peerASN: ${BGP_PEER_ASN}
+      peerAddress: ${BGP_PEER_A}
+      peerConfigRef:
+        name: gateway-pair
+    - name: pair-b
+      peerASN: ${BGP_PEER_ASN}
+      peerAddress: ${BGP_PEER_B}
+      peerConfigRef:
+        name: gateway-pair
+---
+apiVersion: cilium.io/${BGP_API}
+kind: CiliumBGPAdvertisement
+metadata:
+  name: lb-vips
+  labels:
+    advertise: lb-vips
+spec:
+  advertisements:
+  - advertisementType: Service
+    service:
+      addresses: ["LoadBalancerIP"]
+    selector:
+      matchExpressions:
+      - key: ai-fabric.lab/lb-pool
+        operator: NotIn
+        values: ["control"]

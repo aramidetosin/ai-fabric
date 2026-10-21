@@ -1,0 +1,72 @@
+# S3 stand-in for the Pure Storage FlashBlade (which serves S3 and NFS natively in production). Runs ON the storage node, on that node's own
+# disk (hostPath, NOT a Longhorn volume: the Longhorn backup target must not live on Longhorn). Buckets: harbor (registry blobs),
+# longhorn-backups (Longhorn backup target). Credentials: Secret s3/minio-root, generated inside the cluster by harbor-deploy.sh.
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: minio, namespace: s3, labels: {app: minio}}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector: {matchLabels: {app: minio}}
+  template:
+    metadata: {labels: {app: minio}}
+    spec:
+      nodeSelector: {node-role.kubernetes.io/storage: ""}
+      containers:
+      - name: minio
+        image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+        args: [server, /data, --console-address, ":9001"]
+        env:
+        - {name: MINIO_ROOT_USER, valueFrom: {secretKeyRef: {name: minio-root, key: rootUser}}}
+        - {name: MINIO_ROOT_PASSWORD, valueFrom: {secretKeyRef: {name: minio-root, key: rootPassword}}}
+        - {name: MINIO_BROWSER_REDIRECT_URL, value: "https://s3-console.platform.lab.ai"}     # the console is published through the lab Gateway
+        ports: [{containerPort: 9000, name: s3}, {containerPort: 9001, name: console}]
+        readinessProbe: {httpGet: {path: /minio/health/ready, port: 9000}, initialDelaySeconds: 10, periodSeconds: 10}
+        resources: {requests: {cpu: 100m, memory: 512Mi}}
+        volumeMounts: [{name: data, mountPath: /data}]
+      volumes:
+      - name: data
+        hostPath: {path: /var/lib/minio-s3, type: DirectoryOrCreate}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: minio, namespace: s3}
+spec:
+  selector: {app: minio}
+  ports: [{name: s3, port: 9000, targetPort: 9000}, {name: console, port: 9001, targetPort: 9001}]
+---
+# Published through the lab Gateway (TLS = the *.platform.lab.ai certificate of the cluster CA, names served by the bastion's wildcard record):
+#   https://s3-console.platform.lab.ai   object browser (log in with the keys in Secret s3/minio-root)
+#   https://s3.platform.lab.ai           the S3 API for clients outside the cluster (aws cli, mc, s3cmd; path-style addressing)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata: {name: s3-console, namespace: s3}
+spec:
+  parentRefs: [{name: gateway, namespace: gateway}]
+  hostnames: ["s3-console.platform.lab.ai"]
+  rules: [{backendRefs: [{name: minio, port: 9001}]}]
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata: {name: s3-api, namespace: s3}
+spec:
+  parentRefs: [{name: gateway, namespace: gateway}]
+  hostnames: ["s3.platform.lab.ai"]
+  rules: [{backendRefs: [{name: minio, port: 9000}], timeouts: {request: 3600s}}]
+---
+apiVersion: batch/v1
+kind: Job
+metadata: {name: minio-buckets, namespace: s3}
+spec:
+  backoffLimit: 10
+  ttlSecondsAfterFinished: 86400
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: mc
+        image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+        env:
+        - {name: U, valueFrom: {secretKeyRef: {name: minio-root, key: rootUser}}}
+        - {name: P, valueFrom: {secretKeyRef: {name: minio-root, key: rootPassword}}}
+        command: [sh, -c, "mc alias set lab http://minio.s3.svc.cluster.local:9000 \"$U\" \"$P\" >/dev/null && mc mb --ignore-existing lab/harbor lab/longhorn-backups && mc ls lab"]
