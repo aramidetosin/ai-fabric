@@ -43,8 +43,10 @@ have no usable default** and must be generated, or stage 2 fails.
 ```bash
 cp .env.example .env
 $EDITOR .env                  # set every value; generation commands are in the comments
-set -a; . ./.env; set +a      # export before gen.py / up.sh
+set -a; . ./.env; set +a      # only needed when you run gen.py or another script BY HAND
 ```
+
+`up.sh` sources `.env` itself, so the `systemd-run` form below needs no extra setup.
 
 Then create your own key file (the original was removed for publication). **Operator keys only** —
 anything else in this file is handed to the switches. Two roles matter:

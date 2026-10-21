@@ -3,6 +3,10 @@
 # ./up.sh light = same cabling, servers as containers. Existing guest disks are re-used (./down.sh wipe starts from nothing). NO_FINISH=1 stops after the deploy.
 set -euo pipefail
 cd "$(dirname "$0")"
+# .env carries the licensed image tags and the kubeadm secrets. Source it HERE so every way of starting a deploy behaves the
+# same -- above all `systemd-run`, which starts the unit with an empty environment: without this the generator would emit
+# SET_IN_ENV/... image names and kubeadm would reject the placeholder join token, half an hour into the run.
+[ -f .env ] && { set -a; . ./.env; set +a; }
 python3 gen.py
 T=ai-fabric.clab.yml; [ "${1:-}" = light ] && T=ai-fabric-light.clab.yml
 [ -f "$(dirname "$0")/images/vm-node/base/noble-server-cloudimg-amd64.img" ] || { echo "missing Ubuntu base image: see RUNBOOK.md section 2 (images/vm-node/base/noble-server-cloudimg-amd64.img)"; exit 1; }
